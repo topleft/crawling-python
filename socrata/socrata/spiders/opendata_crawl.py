@@ -9,12 +9,13 @@ from socrata.items import SocrataItem
 class OpendataSpider(CrawlSpider):
     name = "opendata_crawl"
     allowed_domains = ["opendata.socrata.com"]
-    start_urls = ['https://opendata.socrata.com/']
+    start_urls = (
+        'https://opendata.socrata.com/',
+    )
     rules = [
-        Rule(LinkExtractor(allow='browse\?utf8=%E2%9C%93&page=\*', ), callback='parse', follow=True)
+        Rule(LinkExtractor(allow='browse\?utf8=%E2%9C%93&page=\d*'), callback='parse_item', follow=True)
     ]
-
-    def parse(self, response):
+    def parse_item(self, response):
         titles = Selector(response).xpath('//div[@itemscope="itemscope"]')
         for title in titles:
             item = SocrataItem()
